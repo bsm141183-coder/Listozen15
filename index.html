@@ -3,94 +3,213 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Таблица оценок</title>
+  <title>Копилка пожеланий — Табло</title>
   <style>
-    html, body { height: 100%; margin: 0; }
-    .wrap { height: 100%; display: flex; flex-direction: column; }
-    .bar {
-      padding: 10px 12px;
-      font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      border-bottom: 1px solid #e5e7eb;
-      background: #ffffff;
-    }
-    .bar b { font-weight: 600; }
-    .hint { color: #6b7280; margin-top: 4px; font-size: 12px; }
-    iframe { flex: 1; width: 100%; border: 0; }
-    .fallback {
-      display: none;
-      padding: 14px;
-      font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: #fff;
-      border-top: 1px solid #e5e7eb;
-    }
-    .fallback a { color: #2563eb; text-decoration: none; }
-    .fallback a:hover { text-decoration: underline; }
-    .pill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: #f3f4f6;
-      font-size: 12px;
-      margin-left: 8px;
-      color: #374151;
-    }
+    body{font:14px/1.45 system-ui,Segoe UI,Roboto,Arial; margin:0; background:#f6f7fb; color:#0f172a;}
+    header{background:#fff; border-bottom:1px solid #e2e8f0; padding:14px 16px;}
+    h1{margin:0; font-size:18px;}
+    .muted{color:#64748b; font-size:12px; margin-top:6px;}
+    main{max-width:1100px; margin:0 auto; padding:16px; display:grid; gap:12px; grid-template-columns: 380px 1fr;}
+    .card{background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:14px; box-shadow:0 1px 4px rgba(2,6,23,.06);}
+    h2{font-size:15px; margin:0 0 10px;}
+    .grid{display:grid; gap:10px;}
+    .stat{border:1px solid #e2e8f0; border-radius:12px; padding:10px; background:#fff;}
+    .stat .k{font-size:12px; color:#64748b;}
+    .stat .v{font-size:22px; font-weight:800; margin-top:4px;}
+    .badge{display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; background:#f1f5f9; color:#0f172a; margin-left:8px;}
+    .log{display:grid; gap:8px; max-height:72vh; overflow:auto; padding-right:6px;}
+    .item{border:1px dashed #cbd5e1; border-radius:12px; padding:10px; background:#fff;}
+    .bad{border-color:#fecaca; background:#fff1f2;}
+    .meta{display:flex; flex-wrap:wrap; gap:6px; align-items:center;}
+    .msg{margin-top:6px;}
+    .warn{color:#b45309; font-size:12px; margin-top:8px;}
+    .ok{color:#166534; font-size:12px; margin-top:8px;}
+    .small{font-size:12px; color:#475569; margin-top:10px;}
+    button{border:0; border-radius:10px; padding:10px 12px; font:inherit; cursor:pointer;}
+    .btn-ghost{background:#eef2ff; color:#1e293b; width:100%;}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="bar">
-      <b>Оценки</b><span class="pill">Google Sheets</span>
-      <div class="hint">
-        Если таблица не отображается, значит она не “Опубликована в интернете” (File → Publish to the web).
+<header>
+  <h1>Копилка пожеланий — Табло</h1>
+  <div class="muted">На доске отображаются только пожелания, где в столбце E стоит “Да/TRUE/Показывать”.</div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>Статистика</h2>
+
+    <div class="grid">
+      <div class="stat">
+        <div class="k">Всего пожеланий (в таблице)</div>
+        <div class="v" id="totalCnt">0</div>
+      </div>
+      <div class="stat">
+        <div class="k">Одобрено (E = Да/TRUE)</div>
+        <div class="v" id="approvedCnt">0</div>
+      </div>
+      <div class="stat">
+        <div class="k">Обновление</div>
+        <div class="v" style="font-size:16px; font-weight:700;" id="lastRefresh">—</div>
+      </div>
+
+      <button class="btn-ghost" id="force">Обновить сейчас</button>
+
+      <div id="status" class="warn"></div>
+      <div class="small">
+        Источник: Google Sheet (GVIZ)<br>
+        Лист: <b>Form_Responses</b> (если у вас другое имя вкладки — поменяйте в коде переменную SHEET_NAME)
       </div>
     </div>
+  </section>
 
-    <!--
-      ВАЖНО:
-      Для встраивания нужен режим публикации.
-      Эта ссылка начинает работать после: Файл → Опубликовать в интернете → Веб-страница.
-    -->
-    <iframe
-      id="sheetFrame"
-      src="https://docs.google.com/spreadsheets/d/1slhAN9u0Wiu1bkC3fwVbMjVb8jYa29tEdMpcClF4nB8/pubhtml?widget=true&amp;headers=false"
-      loading="lazy"
-      referrerpolicy="no-referrer"
-    ></iframe>
+  <section class="card">
+    <h2>Доска пожеланий <span class="badge" id="boardCnt">0</span></h2>
+    <div class="log" id="log"></div>
+  </section>
+</main>
 
-    <div class="fallback" id="fallback">
-      Таблица не открылась внутри страницы (обычно так бывает, если Google не разрешил встраивание или таблица не опубликована).
-      <br><br>
-      Откройте таблицу по ссылке:
-      <a href="https://docs.google.com/spreadsheets/d/1slhAN9u0Wiu1bkC3fwVbMjVb8jYa29tEdMpcClF4nB8/edit?usp=sharing" target="_blank" rel="noreferrer">
-        открыть Google Sheet
-      </a>
-    </div>
-  </div>
+<script>
+  // =========================
+  // ВАША ТАБЛИЦА (по ссылке edit?usp=sharing)
+  // =========================
+  const SPREADSHEET_ID = "10koISWPsmWpD2zrAHrFkwga_M5_aFJGIN9U_M5otwVA";
 
-  <script>
-    // Если iframe не загрузился/пустой (часто из-за ограничений Google), покажем запасной вариант.
-    const frame = document.getElementById('sheetFrame');
-    const fallback = document.getElementById('fallback');
+  // Название вкладки (по вашему скрину было "Form_Responses").
+  // Если у вас вкладка называется иначе — поменяйте здесь.
+  const SHEET_NAME = "Form_Responses";
 
-    let shown = false;
-    function showFallback() {
-      if (shown) return;
-      shown = true;
-      fallback.style.display = 'block';
+  // Настройки
+  const REFRESH_MS = 5000;  // автообновление
+  const MAX_SHOW = 120;     // сколько показывать на доске
+
+  // Ожидаемые колонки:
+  // A Timestamp, B Кто пишет, C Кому пишет, D Пожелание, E Статус/Модерация, F Ошибка
+  const QUERY = "select A,B,C,D,E,F";
+
+  const $log = document.getElementById("log");
+  const $totalCnt = document.getElementById("totalCnt");
+  const $approvedCnt = document.getElementById("approvedCnt");
+  const $boardCnt = document.getElementById("boardCnt");
+  const $status = document.getElementById("status");
+  const $lastRefresh = document.getElementById("lastRefresh");
+  document.getElementById("force").addEventListener("click", () => tick(true));
+
+  function escapeHtml(s){
+    return String(s ?? "").replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[c]));
+  }
+
+  // Принимаем TRUE/Да/Показывать/1/Yes
+  function isTrueLike(v){
+    const t = String(v ?? "").trim().toLowerCase();
+    return t === "true" || t === "да" || t === "показывать" || t === "show" || t === "1" || t === "yes";
+  }
+
+  // ===== GVIZ загрузка (без fetch) =====
+  function loadWishesGVIZ(){
+    return new Promise((resolve, reject) => {
+      const cbName = "__gviz_cb_" + Date.now();
+
+      window[cbName] = (resp) => {
+        try{
+          const rows = (resp && resp.table && resp.table.rows) ? resp.table.rows : [];
+          const items = rows.map(r => {
+            const c = (r.c || []).map(x => x ? (x.v ?? "") : "");
+            return {
+              ts: String(c[0] ?? "").trim(),
+              from: String(c[1] ?? "").trim(),
+              to: String(c[2] ?? "").trim(),
+              msg: String(c[3] ?? "").trim(),
+              approved: c[4] ?? "",
+              errorText: String(c[5] ?? "").trim()
+            };
+          }).filter(it => it.from && it.to && it.msg);
+
+          resolve(items);
+        } catch(e){
+          reject(e);
+        } finally {
+          try{ delete window[cbName]; } catch(_){}
+        }
+      };
+
+      const script = document.createElement("script");
+      const tq = encodeURIComponent(QUERY);
+      const sheet = encodeURIComponent(SHEET_NAME);
+
+      // responseHandler=... даёт callback в JS, работает и при file://
+      script.src =
+        `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?` +
+        `sheet=${sheet}&tq=${tq}&tqx=out:json;responseHandler:${cbName}`;
+
+      script.onerror = () => {
+        try{ delete window[cbName]; } catch(_){}
+        reject(new Error("Не удалось загрузить данные. Проверьте: доступ по ссылке (Просмотр) и имя вкладки."));
+      };
+
+      document.head.appendChild(script);
+      setTimeout(() => { try{ script.remove(); } catch(_){} }, 3000);
+    });
+  }
+
+  function render(allItems){
+    const total = allItems.length;
+    const approvedItems = allItems.filter(it => isTrueLike(it.approved));
+    const approved = approvedItems.length;
+
+    $totalCnt.textContent = String(total);
+    $approvedCnt.textContent = String(approved);
+
+    // На доске — только одобренные
+    const list = approvedItems.slice(-MAX_SHOW).reverse();
+    $boardCnt.textContent = String(list.length);
+
+    $log.innerHTML = "";
+    list.forEach(it => {
+      const badSelf = (it.from === it.to);
+      const div = document.createElement("div");
+      div.className = "item" + (badSelf ? " bad" : "");
+
+      const errBadge = it.errorText ? `<span class="badge">${escapeHtml(it.errorText)}</span>` : "";
+      const selfBadge = badSelf ? `<span class="badge">ошибка: самому себе</span>` : "";
+
+      div.innerHTML = `
+        <div class="meta">
+          <b>${escapeHtml(it.from)}</b> → <b>${escapeHtml(it.to)}</b>
+          <span class="badge">${escapeHtml(it.ts)}</span>
+          ${selfBadge} ${errBadge}
+        </div>
+        <div class="msg">${escapeHtml(it.msg)}</div>
+      `;
+      $log.appendChild(div);
+    });
+  }
+
+  let ticking = false;
+
+  async function tick(showOk=false){
+    if (ticking) return;
+    ticking = true;
+    try{
+      const items = await loadWishesGVIZ();
+      render(items);
+
+      $status.className = "ok";
+      $status.textContent = showOk ? "Обновлено." : "";
+      $lastRefresh.textContent = new Date().toLocaleTimeString();
+    } catch(e){
+      $status.className = "warn";
+      $status.textContent = "Проблема: " + (e?.message || "неизвестная ошибка");
+    } finally {
+      ticking = false;
     }
+  }
 
-    // Если через ~6 секунд внутри iframe ничего не отрисовалось — показываем fallback.
-    setTimeout(() => {
-      try {
-        // Доступ к содержимому iframe может быть ограничен (CORS), поэтому проверка “мягкая”.
-        // Просто показываем fallback, если iframe выглядит как “не загрузился”.
-        if (!frame || frame.clientHeight < 200) showFallback();
-      } catch (e) {
-        showFallback();
-      }
-    }, 6000);
-
-    frame.addEventListener('error', showFallback);
-  </script>
+  // старт
+  tick(true);
+  setInterval(tick, REFRESH_MS);
+</script>
 </body>
 </html>
