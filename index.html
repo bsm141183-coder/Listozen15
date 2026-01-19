@@ -3,184 +3,94 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Урок — материалы</title>
+  <title>Таблица оценок</title>
   <style>
-    :root{
-      --bg:#f6f7fb; --card:#ffffff; --text:#0f172a; --muted:#475569;
-      --border:#e2e8f0; --accent:#2563eb;
+    html, body { height: 100%; margin: 0; }
+    .wrap { height: 100%; display: flex; flex-direction: column; }
+    .bar {
+      padding: 10px 12px;
+      font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      border-bottom: 1px solid #e5e7eb;
+      background: #ffffff;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--text);
-      background:linear-gradient(180deg,#fff,var(--bg));
+    .bar b { font-weight: 600; }
+    .hint { color: #6b7280; margin-top: 4px; font-size: 12px; }
+    iframe { flex: 1; width: 100%; border: 0; }
+    .fallback {
+      display: none;
+      padding: 14px;
+      font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #fff;
+      border-top: 1px solid #e5e7eb;
     }
-    header{
-      padding:18px 16px;
-      border-bottom:1px solid var(--border);
-      background:#fff;
-      position:sticky; top:0; z-index:2;
+    .fallback a { color: #2563eb; text-decoration: none; }
+    .fallback a:hover { text-decoration: underline; }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      font-size: 12px;
+      margin-left: 8px;
+      color: #374151;
     }
-    header h1{margin:0;font-size:18px}
-    header p{margin:6px 0 0;color:var(--muted)}
-    main{max-width:980px;margin:0 auto;padding:16px}
-    .grid{display:grid;gap:12px;grid-template-columns:repeat(12,1fr)}
-    .card{
-      grid-column:span 12;
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:14px;
-      box-shadow:0 6px 18px rgba(15,23,42,.06);
-    }
-    @media (min-width:900px){
-      .col-7{grid-column:span 7}
-      .col-5{grid-column:span 5}
-    }
-    h2{margin:0 0 8px;font-size:16px}
-    ul{margin:8px 0 0;padding-left:18px}
-    li{margin:6px 0}
-    .muted{color:var(--muted)}
-    .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    a.btn{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:10px 12px;border-radius:12px;
-      border:1px solid var(--border);
-      text-decoration:none;color:var(--text);background:#fff;
-    }
-    a.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-    .badge{
-      display:inline-block;
-      padding:2px 8px;border-radius:999px;
-      background:#eef2ff;color:#3730a3;
-      font-size:12px;margin-left:6px;
-    }
-    .box{
-      border:1px dashed var(--border);
-      border-radius:12px;
-      padding:12px;
-      background:#fafafa;
-    }
-    code{
-      background:#0f172a;color:#fff;
-      padding:2px 6px;border-radius:8px;
-      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-      font-size:12px;
-    }
-    footer{padding:16px;color:var(--muted);text-align:center}
   </style>
 </head>
-
 <body>
-  <header>
-    <h1>Материалы урока <span class="badge">встраивается в ClassroomScreen</span></h1>
-    <p>Откройте инструкции, задания и полезные ссылки. Страница лёгкая и без блокировок Google.</p>
-  </header>
-
-  <main>
-    <div class="grid">
-
-      <section class="card col-7">
-        <h2>Цель занятия</h2>
-        <p class="muted">
-          Сформировать практические навыки по теме урока и подготовить результат к сдаче по критериям.
-        </p>
-
-        <h2 style="margin-top:12px;">План работы (пример)</h2>
-        <ul>
-          <li>1) Прочитать задачу и критерии (2–3 мин)</li>
-          <li>2) Выполнить работу (20–25 мин)</li>
-          <li>3) Самопроверка по чек-листу (5 мин)</li>
-          <li>4) Сдача результата (2 мин)</li>
-        </ul>
-
-        <div class="btns">
-          <a class="btn primary" href="#tasks">Перейти к заданиям</a>
-          <a class="btn" href="#check">Чек-лист самопроверки</a>
-          <a class="btn" href="#links">Ссылки</a>
-        </div>
-      </section>
-
-      <aside class="card col-5">
-        <h2>Критерии (кратко)</h2>
-        <div class="box">
-          <ul>
-            <li>Структура и аккуратность</li>
-            <li>Правильность и логика</li>
-            <li>Соблюдение требований задания</li>
-            <li>Самопроверка перед сдачей</li>
-          </ul>
-        </div>
-
-        <h2 style="margin-top:12px;">Как сдаём</h2>
-        <p class="muted">
-          Название файла: <code>index.html</code><br/>
-          Папка/архив: <code>ФИО_группа</code><br/>
-          Прикрепить в LMS / Classroom / чат группы.
-        </p>
-      </aside>
-
-      <section class="card" id="tasks">
-        <h2>Задания</h2>
-        <p class="muted">Заполните под ваш урок. Можно оставить 1 вариант или несколько уровней.</p>
-
-        <div class="grid" style="margin-top:10px;">
-          <div class="card" style="grid-column:span 12;">
-            <h2>Базовый уровень</h2>
-            <ul>
-              <li>Соберите структуру страницы: <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;footer&gt;</code></li>
-              <li>Добавьте заголовок и 2–3 блока текста</li>
-              <li>Проверьте валидность и читаемость</li>
-            </ul>
-          </div>
-
-          <div class="card" style="grid-column:span 12;">
-            <h2>Средний уровень</h2>
-            <ul>
-              <li>Добавьте меню навигации по якорям (#tasks, #check, #links)</li>
-              <li>Оформите карточки и списки</li>
-              <li>Сделайте кнопку “Сдать работу” (ссылка на нужный ресурс)</li>
-            </ul>
-          </div>
-
-          <div class="card" style="grid-column:span 12;">
-            <h2>Повышенный уровень</h2>
-            <ul>
-              <li>Сделайте блок “FAQ” (3 вопроса + ответы)</li>
-              <li>Добавьте мини-таблицу критериев (HTML table)</li>
-              <li>Проверьте адаптивность на телефоне</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section class="card" id="check">
-        <h2>Чек-лист самопроверки</h2>
-        <ul>
-          <li>Есть заголовок страницы и понятная структура</li>
-          <li>Теги закрыты, вложенность корректная</li>
-          <li>Текст читабелен, нет “слипшихся” блоков</li>
-          <li>Ссылки работают, якоря ведут к нужным разделам</li>
-          <li>Страница нормально выглядит на телефоне</li>
-        </ul>
-      </section>
-
-      <section class="card" id="links">
-        <h2>Полезные ссылки</h2>
-        <p class="muted">Здесь добавьте ваши ресурсы (учебник, видео, шаблоны).</p>
-        <div class="btns">
-          <a class="btn" href="https://validator.w3.org/" target="_blank" rel="noreferrer">HTML Validator</a>
-          <a class="btn" href="#" target="_blank" rel="noreferrer">Учебник / конспект</a>
-          <a class="btn" href="#" target="_blank" rel="noreferrer">Форма сдачи</a>
-        </div>
-      </section>
-
+  <div class="wrap">
+    <div class="bar">
+      <b>Оценки</b><span class="pill">Google Sheets</span>
+      <div class="hint">
+        Если таблица не отображается, значит она не “Опубликована в интернете” (File → Publish to the web).
+      </div>
     </div>
-  </main>
 
-  <footer>
-    © Материалы урока. Можно редактировать под любой предмет.
-  </footer>
+    <!--
+      ВАЖНО:
+      Для встраивания нужен режим публикации.
+      Эта ссылка начинает работать после: Файл → Опубликовать в интернете → Веб-страница.
+    -->
+    <iframe
+      id="sheetFrame"
+      src="https://docs.google.com/spreadsheets/d/1slhAN9u0Wiu1bkC3fwVbMjVb8jYa29tEdMpcClF4nB8/pubhtml?widget=true&amp;headers=false"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+    ></iframe>
+
+    <div class="fallback" id="fallback">
+      Таблица не открылась внутри страницы (обычно так бывает, если Google не разрешил встраивание или таблица не опубликована).
+      <br><br>
+      Откройте таблицу по ссылке:
+      <a href="https://docs.google.com/spreadsheets/d/1slhAN9u0Wiu1bkC3fwVbMjVb8jYa29tEdMpcClF4nB8/edit?usp=sharing" target="_blank" rel="noreferrer">
+        открыть Google Sheet
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Если iframe не загрузился/пустой (часто из-за ограничений Google), покажем запасной вариант.
+    const frame = document.getElementById('sheetFrame');
+    const fallback = document.getElementById('fallback');
+
+    let shown = false;
+    function showFallback() {
+      if (shown) return;
+      shown = true;
+      fallback.style.display = 'block';
+    }
+
+    // Если через ~6 секунд внутри iframe ничего не отрисовалось — показываем fallback.
+    setTimeout(() => {
+      try {
+        // Доступ к содержимому iframe может быть ограничен (CORS), поэтому проверка “мягкая”.
+        // Просто показываем fallback, если iframe выглядит как “не загрузился”.
+        if (!frame || frame.clientHeight < 200) showFallback();
+      } catch (e) {
+        showFallback();
+      }
+    }, 6000);
+
+    frame.addEventListener('error', showFallback);
+  </script>
 </body>
 </html>
